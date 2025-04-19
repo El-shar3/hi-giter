@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>معلومات جهازك</title>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      background: #eef2f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 500px;
+    }
+
+    h1 { color: #2c3e50; margin-bottom: 20px; }
+    p { font-size: 18px; color: #444; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>معلومات عن جهازك</h1>
+    <p><strong>عنوان IP:</strong> <span id="ip">...</span></p>
+    <p><strong>نظام التشغيل:</strong> <span id="os">...</span></p>
+    <p><strong>المتصفح:</strong> <span id="browser">...</span></p>
+    <p id="media">🚀 جارٍ طلب الكاميرا والمايكروفون...</p>
+  </div>
+
+  <script>
+    // جلب بيانات الجهاز
+    fetch('/api/info')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('ip').textContent = data.ip;
+        document.getElementById('os').textContent = data.os;
+        document.getElementById('browser').textContent = data.browser;
+      });
+
+    // طلب الوصول إلى الكاميرا والمايكروفون
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        document.getElementById('media').textContent = '✅ تم منح الإذن للكاميرا والمايكروفون';
+        stream.getTracks().forEach(track => track.stop());
+      })
+      .catch(err => {
+        document.getElementById('media').textContent = '❌ تم رفض الوصول إلى الكاميرا أو المايكروفون';
+      });
+  </script>
+</body>
+</html>
